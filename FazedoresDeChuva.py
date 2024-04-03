@@ -2,20 +2,30 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import itertools
 
-verticies = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'x', 'w', 'y', 'z'] 
+cidades = ['Afonso Cláudio', 'Água Doce do Norte', 'Águia Branca', 'Alegre', 'Alfredo Chaves', 'Alto Rio Novo', 'Anchieta', 'Apiacá', 'Aracruz', 'Atílio Vivácqua', 'Baixo Guandu', 
+           'Barra de São Francisco', 'Boa Esperança', 'Bom Jesus do Norte', 'Brejetuba', 'Cachoeiro de Itapemirim', 'Cariacica', 'Castelo', 'Colatina', 'Conceição da Barra', 'Conceição do Castelo', 
+           'Divino de São Lourenço', 'Domingos Martins', 'Dores do Rio Preto', 'Ecoporanga', 'Fundão', 'Governador Lindenberg', 'Guaçuí', 'Guarapari', 'Ibatiba', 'Ibiraçu', 'Ibitirama', 
+           'Iconha', 'Irupi', 'Itaguaçu', 'Itapemirim', 'Itarana', 'Iúna', 'Jaguaré', 'Jerônimo Monteiro', 'João Neiva', 'Laranja da Terra', 'Linhares', 'Mantenópolis', 'Marataízes',
+           'Marechal Floriano', 'Marilândia', 'Mimoso do Sul', 'Montanha', 'Mucurici', 'Muniz Freire', 'Muqui', 'Nova Venécia', 'Pancas', 'Pedro Canário', 'Pinheiros', 'Piúma', 'Ponto Belo',
+           'Presidente Kennedy', 'Rio Bananal', 'Rio Novo do Sul', 'Santa Leopoldina', 'Santa Maria de Jetibá', 'Santa Teresa', 'São Domingos do Norte', 'São Gabriel da Palha', 'São José do Calçado',
+           'São Mateus', 'São Roque do Canaã', 'Serra', 'Sooretama', 'Vargem Alta', 'Venda Nova do Imigrante', 'Viana', 'Vila Pavão', 'Vila Valério', 'Vila Velha', 'Vitória']
 
-G = nx.Graph()
+G = nx.Graph() 
 
-for letra in verticies:
-    if letra == 'f':
-        break
+for letra in cidades:
     G.add_node(letra)
 
 
-G.add_weighted_edges_from([('a', 'b', 2), ('a', 'c', 3), ('a', 'e', 4), ('b', 'c', 2), ('b', 'd', 5), ('b', 'e', 7), ('d', 'e', 3)])
+G.add_weighted_edges_from([('Afonso Cláudio', 'Água Doce do Norte', 2), ('Água Doce do Norte', 'Águia Branca', 3), (cidades[2], cidades[0], 5)])
+
+i = 1
+for cidade in cidades:
+    print(f'{i} - {cidade}')
+    i+=1
+
 
 # Definir o vértice inicial
-start_vertex = input('De que verticie você deseja começar? ')
+start_vertex = cidades[int(input('Digite o número referente a cidade que deseja iniciar: '))-1]
 
 # Encontrar o caminho mais curto passando por todos os vértices
 shortest_path = None
