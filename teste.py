@@ -1,6 +1,16 @@
 import networkx as nx
-import matplotlib.pyplot as plt
 import itertools
+import Levenshtein
+
+def get_closest_node(city_name, node_list):
+    closest_node = None
+    min_distance = float('inf')
+    for node in node_list:
+        distance = Levenshtein.distance(city_name.lower(), node.lower())
+        if distance < min_distance:
+            min_distance = distance
+            closest_node = node
+    return closest_node
 
 cidades = ['Afonso Cláudio', 'Água Doce do Norte', 'Águia Branca', 'Alegre', 'Alfredo Chaves', 'Alto Rio Novo', 'Anchieta', 'Apiacá', 'Aracruz', 'Atílio Vivácqua', 'Baixo Guandu', 
            'Barra de São Francisco', 'Boa Esperança', 'Bom Jesus do Norte', 'Brejetuba', 'Cachoeiro de Itapemirim', 'Cariacica', 'Castelo', 'Colatina', 'Conceição da Barra', 'Conceição do Castelo', 
@@ -11,14 +21,7 @@ cidades = ['Afonso Cláudio', 'Água Doce do Norte', 'Águia Branca', 'Alegre', 
            'São Mateus', 'São Roque do Canaã', 'Serra', 'Sooretama', 'Vargem Alta', 'Venda Nova do Imigrante', 'Viana', 'Vila Pavão', 'Vila Valério', 'Vila Velha', 'Vitória']
 
 G = nx.Graph() 
-
-# for letra in cidades:
-#     G.add_node(letra)
-
 G.add_nodes_from(cidades)
-
-# print(G.nodes())
-
 
 G.add_weighted_edges_from([
     (cidades[0], cidades[14], 38),
@@ -220,37 +223,36 @@ G.add_weighted_edges_from([
 i = 1
 for cidade in cidades:
     print(f'{i} - {cidade}')
-    i+=1
+    i += 1
 
-# nx.draw(G, pos=nx.spring_layout(G), with_labels=True)
-# plt.show()
+start_vertex = cidades[int(input('Digite o número referente a cidade que deseja iniciar: ')) - 1]
 
-# Definir o vértice inicial
-start_vertex = cidades[int(input('Digite o número referente a cidade que deseja iniciar: '))-1]
-# start_vertex = cidades[6]
+# Implementação da busca gulosa
+current_vertex = start_vertex
+visited = set([start_vertex])
+total_length = 0
+shortest_path = [start_vertex]
 
-# Encontrar o caminho mais curto passando por todos os vértices
-shortest_path = None
-shortest_path_length = float('inf')
+while len(visited) < len(cidades):
+    min_distance = float('inf')
+    closest_vertex = None
+    for neighbor in G.neighbors(current_vertex):
+        if neighbor not in visited:
+            distance = G[current_vertex][neighbor]['weight']
+            if distance < min_distance:
+                min_distance = distance
+                closest_vertex = neighbor
+    if closest_vertex is not None:
+       total_length += G[current_vertex][closest_vertex]['weight']
+       shortest_path.append(closest_vertex)
+       visited.add(closest_vertex)
+       current_vertex = closest_vertex
 
-# Gerar permutações começando do vértice inicial
-for permutation in itertools.permutations(G.nodes()):
-    if permutation[0] == start_vertex:
-        total_length = 0
-        for i in range(len(permutation) - 1):
-            # Verifica se a aresta existe no grafo
-            if G.has_edge(permutation[i], permutation[i+1]):
-                total_length += G[permutation[i]][permutation[i+1]]['weight']
-            else:
-                break  # Interrompe a iteração se encontrar uma sequência inválida de vértices
-        else:  # Este bloco é executado se o loop interno terminar sem um break
-            # Verifica a aresta entre o último e o primeiro vértice (volta ao começo)
-            if G.has_edge(permutation[-1], permutation[0]):
-                total_length += G[permutation[-1]][permutation[0]]['weight']
-                # Atualiza o menor caminho encontrado até agora
-                if total_length < shortest_path_length:
-                    shortest_path_length = total_length
-                    shortest_path = permutation
+# Adiciona o último vértice para fechar o ciclo
+if current_vertex is not None:
+    # Usar os índices dos vértices em vez dos nomes das cidades para acessar a aresta
+    total_length += G[current_vertex][closest_vertex]['weight']
+    shortest_path.append(start_vertex)
 
 print("Caminho mais curto passando por todos os vértices começando de", start_vertex, ":", shortest_path)
-print("Comprimento do caminho mais curto:", shortest_path_length)
+print("Comprimento do caminho mais curto:", total_length)
